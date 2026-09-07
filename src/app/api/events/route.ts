@@ -27,7 +27,6 @@ export async function GET() {
       },
     });
   } else {
-    // Team member views ONLY assigned events
     events = await prisma.event.findMany({
       where: {
         members: {
@@ -77,7 +76,7 @@ export async function POST(req: Request) {
     });
 
     return NextResponse.json({ event }, { status: 201 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to create event" }, { status: 500 });
   }
 }

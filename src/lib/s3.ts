@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const endpoint = process.env.STORAGE_ENDPOINT;
@@ -27,10 +27,8 @@ export async function generatePresignedUploadUrl(
     ContentType: contentType,
   });
 
-  // Direct client S3 pre-signed upload URL (300 seconds expiry)
   const uploadUrl = await getSignedUrl(s3Client, command, { expiresIn: 300 });
 
-  // Public object URL standard construction
   const basePublicEndpoint = endpoint
     ? endpoint.replace(/\/storage\/v1\/s3$/, "")
     : "https://hclspmtuhffbukjgdxsy.supabase.co/storage/v1/object/public";

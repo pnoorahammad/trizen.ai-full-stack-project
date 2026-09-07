@@ -82,7 +82,7 @@ export async function POST(
     });
 
     return NextResponse.json({ membership }, { status: 201 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to assign member" }, { status: 500 });
   }
 }
