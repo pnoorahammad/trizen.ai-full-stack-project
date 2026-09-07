@@ -4,6 +4,9 @@ import bcrypt from "bcryptjs";
 import { signCustomerGalleryToken, GALLERY_COOKIE_PREFIX } from "@/lib/auth";
 import { z } from "zod";
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 const verifyPinSchema = z.object({
   slug: z.string().min(1),
   pin: z.string().length(6),
@@ -45,7 +48,7 @@ export async function POST(req: Request) {
     });
 
     return response;
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "PIN verification failed" }, { status: 500 });
   }
 }

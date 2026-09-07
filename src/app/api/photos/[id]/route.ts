@@ -4,6 +4,9 @@ import { isAdmin } from "@/lib/rbac";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 const updatePhotoSchema = z.object({
   isSelectedForGallery: z.boolean().optional(),
 });
@@ -17,7 +20,6 @@ export async function PATCH(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Strictly ONLY ADMIN can alter photo selection status
   if (!isAdmin(session)) {
     return NextResponse.json({ error: "Forbidden: Admin access required to select photos" }, { status: 403 });
   }
@@ -37,7 +39,7 @@ export async function PATCH(
     });
 
     return NextResponse.json({ photo });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to update photo status" }, { status: 500 });
   }
 }
@@ -63,7 +65,7 @@ export async function DELETE(
     });
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to delete photo" }, { status: 500 });
   }
 }

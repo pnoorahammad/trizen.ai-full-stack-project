@@ -4,6 +4,9 @@ import { canUserAccessEvent, isAdmin } from "@/lib/rbac";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 const assignMemberSchema = z.object({
   userId: z.string().uuid(),
 });

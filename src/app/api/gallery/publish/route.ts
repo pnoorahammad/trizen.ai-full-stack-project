@@ -5,6 +5,9 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 const publishGallerySchema = z.object({
   eventId: z.string().uuid(),
   slug: z.string().min(3).regex(/^[a-z0-9-]+$/, "Slug must be lowercase alphanumeric with hyphens"),
@@ -17,7 +20,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Strict RBAC: TEAM_MEMBER cannot publish gallery
   if (!isAdmin(session)) {
     return NextResponse.json({ error: "Forbidden: Admin access required to publish gallery" }, { status: 403 });
   }

@@ -4,6 +4,9 @@ import bcrypt from "bcryptjs";
 import { signUserToken, AUTH_COOKIE_NAME } from "@/lib/auth";
 import { z } from "zod";
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1),

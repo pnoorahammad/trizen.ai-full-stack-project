@@ -2,13 +2,15 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCustomerGalleryAccess } from "@/lib/auth";
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 export async function GET(
   req: Request,
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
 
-  // 1. Verify Gallery existence & publication
   const gallery = await prisma.gallery.findUnique({
     where: { slug },
     include: {
@@ -26,7 +28,6 @@ export async function GET(
     return NextResponse.json({ error: "Gallery not found" }, { status: 404 });
   }
 
-  // 2. Verify Customer PIN Session Cookie
   const isUnlocked = await getCustomerGalleryAccess(slug, req);
   if (!isUnlocked) {
     return NextResponse.json(
@@ -42,11 +43,10 @@ export async function GET(
     );
   }
 
-  // 3. Return ONLY photos where isSelectedForGallery === true
   const photos = await prisma.photo.findMany({
     where: {
       eventId: gallery.eventId,
-      isSelectedForGallery: true, // Strict Security Guardrail
+      isSelectedForGallery: true,
     },
     select: {
       id: true,

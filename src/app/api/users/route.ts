@@ -5,6 +5,9 @@ import { Role } from "@prisma/client";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 const createUserSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),

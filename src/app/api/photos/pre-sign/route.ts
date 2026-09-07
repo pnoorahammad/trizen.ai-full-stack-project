@@ -5,6 +5,9 @@ import { generatePresignedUploadUrl } from "@/lib/s3";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 const uploadUrlSchema = z.object({
   eventId: z.string().uuid(),
   filename: z.string().min(1),
@@ -55,7 +58,7 @@ export async function POST(req: Request) {
       publicUrl,
       photoId: photo.id,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Failed to generate pre-signed upload URL" }, { status: 500 });
   }
 }

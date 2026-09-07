@@ -4,6 +4,9 @@ import { prisma } from "@/lib/prisma";
 import { Role } from "@prisma/client";
 import { z } from "zod";
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 const createEventSchema = z.object({
   title: z.string().min(2),
   description: z.string().optional(),
