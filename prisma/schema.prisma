@@ -1,0 +1,78 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  ADMIN
+  TEAM_MEMBER
+}
+
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  passwordHash String
+  role         Role          @default(TEAM_MEMBER)
+  createdAt    DateTime      @default(now())
+  
+  createdEvents Event[]      @relation("CreatedEvents")
+  assignedEvents EventMember[]
+  uploadedPhotos Photo[]
+}
+
+model Event {
+  id          String        @id @default(uuid())
+  title       String
+  description String?
+  date        DateTime      @default(now())
+  createdById String
+  createdBy   User          @relation("CreatedEvents", fields: [createdById], references: [id], onDelete: Cascade)
+  createdAt   DateTime      @default(now())
+
+  members     EventMember[]
+  photos      Photo[]
+  gallery     Gallery?
+}
+
+model EventMember {
+  id        String   @id @default(uuid())
+  eventId   String
+  userId    String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([eventId, userId])
+}
+
+model Photo {
+  id                  String   @id @default(uuid())
+  eventId             String
+  uploadedById        String
+  storageKey          String
+  url                 String
+  filename            String
+  fileSize            Int      @default(0)
+  mimeType            String   @default("image/jpeg")
+  isSelectedForGallery Boolean  @default(false)
+  createdAt           DateTime @default(now())
+
+  event      Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  uploadedBy User     @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+}
+
+model Gallery {
+  id          String    @id @default(uuid())
+  eventId     String    @unique
+  slug        String    @unique
+  pinHash     String
+  isPublished Boolean   @default(false)
+  publishedAt DateTime?
+
+  event       Event     @relation(fields: [eventId], references: [id], onDelete: Cascade)
+}
